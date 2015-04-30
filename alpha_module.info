@@ -1,0 +1,11 @@
+name = Alpha Module
+description = "A template for developing custom modules."
+core = 7.x
+package = IdeaDevel
+php = 5.2.4
+version = 7.x-1.0-dev
+project = alpha_module
+
+; dependencies[] =
+; features[][] =
+; files[] =

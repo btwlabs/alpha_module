@@ -1,0 +1,135 @@
+<?php
+/**
+ * @file
+ * alpha_module.install
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function alpha_module_schema() {
+  $schema = array();
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function alpha_module_install() {
+  if (module_exists('common_support')) {
+    module_load_include('inc', 'common_support', 'common_support.importers.inc');
+  }
+
+  // Homeboxes.
+  include_once('alpha_module.homebox.inc');
+  $homeboxes = alpha_module_homebox_default_homeboxes();
+  common_support_import_homebox($homeboxes);
+
+  // Nodes.
+  include_once('alpha_module.node.inc');
+  $items = alpha_module_node_default_node_types();
+  foreach($items as $type_name => $type) {
+    $new_type = (object)$type;
+    $new_type = node_type_set_defaults($new_type);
+    $new_type->module = 'alpha_module';
+    $new_type->type = $type_name;
+    node_type_save($new_type);
+  }
+
+  // commerce_product Types.
+  include_once('alpha_module.commerce_product_type.inc');
+  $commerce_product_types = alpha_module_default_commerce_product_types();
+  foreach($commerce_product_types as $type) {
+    commerce_product_ui_product_type_save($type);
+  }
+
+  // Field Bases.
+  include_once('alpha_module.field_base.inc');
+  $field_bases = alpha_module_field_default_field_bases();
+  foreach($field_bases as $field_base) {
+    field_create_field($field_base);
+  }
+
+  // Field Instances.
+  include_once('alpha_module.field_instance.inc');
+  $field_instances = alpha_module_field_default_field_instances();
+  foreach($field_instances as $field_instance) {
+    field_create_instance($field_instance);
+  }
+
+  // Taxonomy Vocabularies.
+  include_once('alpha_module.taxonomy.inc');
+  $vocabularies = alpha_module_taxonomy_default_vocabularies();
+  foreach($vocabularies as $vocabulary) {
+    //$object = (object)$vocabulary;
+    taxonomy_vocabulary_save($vocabulary);
+  }
+
+  // User Roles.
+  include_once('alpha_module.user_role.inc');
+  $user_roles = alpha_module_user_default_roles();
+  foreach($user_roles as $user_role) {
+    $role = (object)$user_role;
+    $role->is_new = TRUE;
+    user_role_save($role);
+  }
+
+  // User Permissions.
+  include_once('alpha_module.user_permission.inc');
+  $user_permissions = alpha_module_user_default_permissions();
+  // @todo could probably do this more elegantly with some array manipulations.
+  foreach($user_permissions as $user_permission) {
+    foreach($user_permission['roles'] as $role_name) {
+      $role = user_role_load_by_name($role_name);
+      user_role_grant_permissions($role->rid, array($user_permission['name']));
+    }
+  }
+
+  // Variables.
+  include_once('alpha_module.variable.inc');
+  $variables = alpha_module_default_variables();
+  foreach($variables as $variable) {
+    variable_set($variable->name, $variable->value);
+  }
+
+  // Nodequeues.
+  include_once('alpha_module.nodequeue.inc');
+  $nodequeues = alpha_module_default_nodequeues();
+  foreach($nodequeues as $nodequeue) {
+    // Assign the existing qid if a nodequeue with the same name already exists.
+    $map = common_support_nodequeue_get_qid_map();
+    if (isset($map[$nodequeue['name']])) {
+      $nodequeue['qid'] = $map[$nodequeue['name']];
+    }
+    // Clear the qid if it is a new nodequeue.
+    else {
+      unset($nodequeue['qid']);
+    }
+    common_support_save_queue((array) $nodequeue);
+  }
+
+  // Image Styles.
+  include_once('alpha_module.image_style.inc');
+  $image_styles = alpha_module_default_image_styles();
+  foreach($image_styles as $style) {
+    image_default_style_save($style);
+  }
+}
+
+/**
+ * Implements hook_uninstall();
+ */
+function alpha_module_uninstall() {
+   db_query('DROP TABLE {table_name}');
+   db_query('DROP TABLE {table_name}');
+   
+   cache_clear_all('*', 'cache', TRUE);
+}
+
+
+/**
+ * Implements hook_enable().
+ */
+function alpha_module_enable() {
+
+}

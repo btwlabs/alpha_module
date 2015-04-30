@@ -1,0 +1,416 @@
+<?php
+/**
+ * @file
+ * alpha_module.module
+ */
+
+include_once('alpha_module.features.inc');
+
+/**
+ * Implements hook_init().
+ */
+function alpha_module_init() {
+  // Code here will be executed on each page load.
+}
+
+ /**
+ * Implements hook_permission().
+ */
+function alpha_module_permission() {
+  $permissions = array();
+  /**
+   * Add permissions info array.
+   * 
+   * The format is:
+   * $permissions['permission_machine_name'] = array(
+   *   'title' => t('Admin Permission Name'),
+   *   'description' => t('Description of what my permission confers'),
+   *   'restrict access' => TRUE/FALSE, [adds the warning message]
+   *   'warning' => t('My custom warning'),
+   * );
+   */
+  return $permissions;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function alpha_module_menu() {
+  $items = array();
+  /**
+   * Add menu info array.
+   * The most common format is:
+   * $items['path/to/whatever'] = array(
+   *   'type' => MY_MENU_TYPE_OPTION,
+   *   'title' => t('My page title'),
+   *   'access callback' => 'my_access_function',
+   *   'access arguments' => array(arg1, arg2...),
+   *   'page callback' => 'my_page_callback_function',
+   *   'page arguements => array(arg1, arg2...),
+   *   'menu' => 'menu name this item will be added to',
+   *   'options' => array(options as the 3rd arg to l()),
+   * );
+   */
+  return $items;
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function alpha_module_menu_alter(&$items) {
+  // Changes to $items will alter the menu items.
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function alpha_module_block_info() {
+  $blocks = array();
+  /**
+   * Add block info array.
+   * Most common format:
+   * $blocks['my_block_delta'] = array(
+   *   'info' => t('admin display name of the block'),
+   *   'cache' => MY_CACHE_CHOICE_CONSTANT,
+   * );
+   */
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function alpha_module_block_view($delta) {
+  $block = array();
+  switch($delta) {
+    /**
+     * Deltas in this switch refer to the
+     * ones created in hook_block_info().
+     */
+    default:
+      /**
+       * Configure a block.
+       * Most common format:
+       * $block['subject'] = t('My block title');
+       * $block['content'] = 'my block content';
+       * 
+       * NOTE: In most cases the block content will
+       * be a theme call (theme('theme_name')) that will return html. 
+       * This way you can supply a template for the block content
+       * that themers can easily customize.
+       */
+      return $block;
+      break;
+  }
+}
+
+/**
+ * Implements hook_block_configure().
+ */
+function alpha_module_block_configure($delta) {
+  /**
+   * Return a configuration form ala the form API.
+   */
+}
+
+/**
+ * Implements hook_block_save().
+ */
+function alpha_module_block_save($delta = '', $edit) {
+  /**
+   * Save your configs by block delta.
+   */
+}
+
+// ************************************* ENTITY INFO
+/**
+ * Implements hook_entity_info().
+ */
+function alpha_module_entity_info() {
+  $entities = array();
+  /**
+   * Create an entity info array.
+   * Common Format:
+   * $entities['my_entity_machine_name'] = array(
+   *   'label' => t('My Entity Name'),
+   *   'entity class' => 'MyEntityClass',
+   *   'controller class' => 'MyEntityController', [leave blank to use the default controller]
+   *   'base table' => 'my_entity_table',
+   *   'load hook' => 'load_my_entity',
+   *   'fieldable' => TRUE/FALSE, [can fields be added?]
+   *   'exportable' => TRUE/FALSE, [can it be exported ala features?]
+   *   'entity keys' => array(
+   *       'id' => 'my_entity_id', [the unique id in the entity's table]
+   *       'bundle' => 'my_entity_type', [the name of bundle property read:column]
+   *   ),
+   *   'bundle keys' => array(
+   *     'bundle' => 'my_entity_type',
+   *   ),
+   *   'bundles' => array(
+   *     'label' => t('My Entity Type'),
+   *     'admin' => array(
+   *       'path' => 'path/to/entity/bundle/admin/page',
+   *       'access callback' => 'my_entity_bundle_admin_access_function',
+   *       'access arguments' => array(arg1, arg2...),
+   *     ),
+   *   ),
+   *   'view modes' => array(
+   *     'my_entity_full' => array(
+   *     	'label' => t('My Entity Full View'),
+   *     	'custom settings' => TRUE/FALSE, [should custom display settings be available by default?]
+   *     ),
+   *     ...
+   *   ),
+   * );
+   */
+  return $entities;
+}
+
+
+/**
+ * Implements hook_entity_property_info().
+ */
+function alpha_module_entity_property_info() {
+  $properties = array();
+  /**
+   * Create an array of the entity's properties.
+   * These should match the columns in your entity's database.
+   * Common Format:
+   * $properties['my_entity_machine_name'] = array(
+   *   'properties' => array(
+   *     'property1' => array(
+   *       'label' => t('My Entity Property #1'),
+   *       'description' => t('Description of this property'),
+   *       'type' => 'text'/'integer'/'entity', [the datatype of this property]
+   *       'bundle' => [if the property is an entity, then you can specify the bundle],
+   *       'options list' => array('option1', 'option2'...), [if restricted only to certain options]
+   *     ),
+   *     ...
+   *   ),
+   *   'bundles' => array(
+   *     'properties' => array(
+   *       'bundleProperty1' => [array structured as above],
+   *       ...
+   *     ),
+   *   ),
+   *   
+   * );
+   */
+  return $properties;
+}
+
+/**
+ * Access function for the entity.
+ * @param string $op
+ * @param stdClass $entity (variable for the entity)
+ * @param stdClass $account
+ * @param string $entity_type
+ */
+function alpha_module_entity_access($op, $coolkeys, $account = null, $entity_type = null) {
+  if (!isset($account)) {
+    global $user;
+    $account = $user;
+  }
+  switch ($op) {
+    default: return user_access('<= access callback =>');
+  }
+}
+
+/**
+* Load an entity.
+*/
+function alpha_module_entity_load($id, $reset = FALSE) {
+  $alpha_module_entity = alpha_module_group_load_multiple(array($id), array(), $reset);
+  return reset($alpha_module_entity);
+}
+
+/**
+* Load multiple entities based on certain conditions.
+*/
+function alpha_module_entity_load_multiple($ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('alpha_module_entity', $ids, $conditions, $reset);
+}
+
+/**
+* Save alpha module entity.
+*/
+function alpha_module_entity_save($alpha_module_entity) {
+ entity_save('alpha_module_entity', $alpha_module_entity);
+ /**
+  * Code here will be executed when an entity is saved.
+  * This space is useful for other things besides saving
+  * the entity like scheduling jobs.
+  */
+}
+
+/**
+* Delete single alpha module entity.
+*/
+function alpha_module_entity_delete($alpha_module_entity) {
+  entity_delete('alpha_module_entity', entity_id('alpha_module_entity' ,$alpha_module_entity_id));
+}
+
+/**
+* Delete multiple alpha module entities.
+*/
+function alpha_module_entity_delete_multiple($entity_ids) {
+  entity_delete_multiple('alpha_module_entity', $alpha_module_enitity_ids);
+}
+
+/**
+ * Implements hook_views_data_alter.
+ */
+function alpha_module_views_data_alter(&$data) {
+  /**
+   * Entity api already provides fields, filters, and
+   * sorts for your entity. However you may also want
+   * to implement some custom ones such as special action
+   * links or formatted dates etc.
+   * 
+   * For format look to hook_views_data().
+   */
+}
+
+//*****Schedule cron jobs.
+
+/**
+ * Implements hook_cron_job_scheduler_info().
+ */
+function alpha_module_cron_job_scheduler_info() {
+  $schedulers = array();
+  /**
+   * Create schedulers for cron jobs.
+   * Format:
+   * $schedulers = array();
+   * $schedulers['example_unpublish'] = array(
+   *   'worker callback' => 'example_unpublish_nodes',
+   * );
+   * return $schedulers;
+   * 
+   * To schedule the job in whatever function:
+   * $job = array(
+   *   'type' => 'story',
+   *   'id' => 12,
+   *   'period' => 3600,
+   *   'periodic' => TRUE,
+   * );
+   * JobScheduler::get('example_unpublish')->set($job);
+   * 
+   * See the job_scheduler module README.txt for more options.
+   */
+  return $schedulers;
+}
+
+//*****Sample alpha module form
+
+function alpha_module_form($form, &$form_state) {
+  $form = array();
+  // Create your form here using form api render arrays.
+  return $form;
+}
+
+/**
+ * Validate alpha_module_form
+ */
+function alpha_module_form_validate($form, &$form_state){
+  /**
+   * Code here can validate your form_state and highlight
+   * any errors in submission.
+   */
+}
+
+/**
+ * Handle alpha_module_form submit
+ */
+function alpha_module_form_submit($form, &$form_state) {
+  /**
+   * Code here will execute when the form is submitted.
+   * This is the place to do something with the data submitted
+   * in the form_state['values'].
+   */
+}  
+
+/**
+ * Implements hook_form_alter().
+ */
+function alpha_module_form_alter(&$form, $form_state, $form_id) {
+  /**
+   * Code here can alter a form before it is rendered.
+   * Just check that you are altering the right form by
+   * comparing $form_id to your target id, and the make
+   * changes to $form.
+   */
+}
+
+/**
+ * Implements hook_token_info().
+ */ 
+function alpha_module_token_info() {
+  $types = array();
+  /**
+   * Create a token group info array.
+   * Common format:
+   * $types['token_group'] = array( [this is the grouping of tokens]
+   *   'name' => t('My Token type'),
+   *   'description' => t('A description of my token type'),
+   *   'needs-data' => 'alpha_module_entity', [use this if you need some data in hook_tokens to do replacement]
+   * );
+   * ...
+   */
+  $tokens = array();
+  /**
+   * Create a token array.
+   * Common format:
+   * $tokens['token_group'] = array(
+   *   'token1_machine_name' => array(
+   *     'name' => t('Token1 Name'),
+   *     'description' => t('Token1 Description'),
+   *     'needs-data' => [as above],
+   *   ),
+   *   ...
+   * );
+   */
+  return array(
+    'types' => $types,
+    'tokens' => $tokens,
+  );
+}
+
+/**
+ * Implements hook_tokens().
+ * $type is taken from hook_token_info.
+ * $tokens is provided by token_replace() from the text
+ *   being replaced.
+ * $data is an array of data to be used in token replacement.
+ *   see 'needs-data' above in hook_token_info().
+ */
+function alpha_module_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  $replacements = array();
+  /**
+   * Provide token replacements here.
+   * Format:
+   * $replacements['[raw token string]'] => 'replacement value';
+   * ...
+   */
+  return $replacements;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function alpha_module_theme() {
+  $themes = array();
+  /**
+   * Create a theme array.
+   * Common Format:
+   * $themes['my_theme1'] = array(
+   *   'variables' => array(
+   *     'var1' => 'var1 default value',
+   *     ...
+   *   ),
+   *   'template' => 'my_theme_template', [no .tpl.php]
+   *   'file' => themes/my_themes.inc,
+   * );
+   */
+  return $themes;
+}
