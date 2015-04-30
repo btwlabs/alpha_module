@@ -414,3 +414,17 @@ function alpha_module_theme() {
    */
   return $themes;
 }
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function alpha_module_ctools_plugin_api($module = NULL, $api = NULL) {
+  return common_support_ctools_plugin_api($module, $api);
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function alpha_module_views_api($module = NULL, $api = NULL) {
+  return common_support_views_api($module, $api);
+}
