@@ -110,9 +110,6 @@ function alpha_module_install() {
     $errors = TRUE;
   }
 
-  // Field Groups.
-
-
   if ($errors) {
     drupal_set_message(t('There were errors importing exports in alpha_module install'), 'error');
   }
