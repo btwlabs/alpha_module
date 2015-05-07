@@ -32,7 +32,7 @@ function alpha_module_install() {
 
   // Nodes.
   include_once('alpha_module.node_type.inc');
-  $items = alpha_module_node_info();
+  $items = alpha_module_node_default_node_types();
   if (!common_support_import_node_types('alpha_module', $items)) {
     watchdog('alpha_module_import_node_types', t('Could not import node types'));
     $errors = TRUE;
