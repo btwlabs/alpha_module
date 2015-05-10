@@ -17,7 +17,7 @@ function alpha_module_schema() {
  */
 function alpha_module_install() {
   if (module_exists('common_support')) {
-    module_load_include('inc', 'common_support', 'common_support.importers.inc');
+    module_load_include('inc', 'common_support', 'common_support.importers');
   }
 
   $errors = FALSE;
