@@ -13,6 +13,23 @@ function alpha_module_init() {
   // Code here will be executed on each page load.
 }
 
+/**
+ * Implements hook_common_support_import().
+ */
+function alpha_module_common_support_import() {
+  return array(
+    'node_type',
+    'field_base',
+    'field_instance',
+    'commerce_product',
+    'vocabulary',
+    'user_role',
+    'user_permission',
+    'variable',
+    'nodequeue',
+  );
+}
+
  /**
  * Implements hook_permission().
  */
