@@ -4,8 +4,6 @@
  * alpha_module.module
  */
 
-include_once('alpha_module.features.inc');
-
 /**
  * Implements hook_init().
  */
