@@ -64,6 +64,8 @@ function alpha_module_menu() {
    *   'page arguements => array(arg1, arg2...),
    *   'menu' => 'menu name this item will be added to',
    *   'options' => array(options as the 3rd arg to l()),
+   *   'file' => name of a file to include,
+   *   'path' => path of to the file (defaults to module dir,
    * );
    */
   return $items;
