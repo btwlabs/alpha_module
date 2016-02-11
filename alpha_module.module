@@ -217,6 +217,70 @@ function alpha_module_entity_property_info() {
 }
 
 /**
+ * Implements hook_entity_info_alter().
+ */
+function alpha_module_entity_info_alter(&$entity_info) {
+  foreach (alpha_module_entity_types() as $type => $info) {
+    $entity_info['alpha_module_entity']['bundles'][$type] = array(
+      'label' => $info->label,
+      'admin' => array(
+        'path' => 'admin/structure/alpha_module/types/manage/%alpha_module_type',
+        'real path' => 'admin/structure/alpha_module/types/manage/' . $type,
+        'bundle argument' => 5,
+      ),
+    );
+  }
+}
+
+
+/**
+ * Returns HTML for a list of available alpha module entity types for node creation.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - content: An array of alpha module types.
+ *
+ * @ingroup themeable
+ */
+function theme_alpha_module_list($variables) {
+  $content = $variables['content'];
+  $output = '';
+
+  if ($content) {
+    $output = '<dl class="-campaign-type-list">';
+    foreach ($content as $item) {
+      $output .= '<dt>' . l($item['title'], $item['href'], $item['localized_options']) . '</dt>';
+      $output .= '<dd>' . filter_xss_admin($item['description']) . '</dd>';
+    }
+    $output .= '</dl>';
+  }
+  else {
+    $output = '<p>' . t('You have not created any campaign types yet. Go to the <a href="@create-content">campaign type creation page</a> to add a new  campaign type.', array('@create-content' => url('admin/structure/-campaigns/types/add'))) . '</p>';
+  }
+  return $output;
+}
+
+/**
+ * Form factory for campaign type forms.
+ * @param string $type
+ *   campaign type machine name
+ * @param stdClass $entity
+ *   The entity to create a form for
+ * @param string $op
+ *   The operation (add, edit, etc). Not used currently.
+ */
+function alpha_module_forms_wrapper($type, $entity, $op='add') {
+  if (!isset($entity)) {
+    $entity = campaign_default_entity($type);
+  }
+  else {
+    $type = $entity->type;
+  }
+  $form = drupal_get_form('campaign_edit_' . $type . '_form', $entity);
+  return $form;
+}
+
+/**
  * Access function for the entity.
  * @param string $op
  * @param stdClass $entity (variable for the entity)
@@ -286,6 +350,42 @@ function alpha_module_views_data_alter(&$data) {
    * 
    * For format look to hook_views_data().
    */
+}
+
+/**
+ * List of  Alpha Module Entity Types.
+ */
+function alpha_module_entity_types($owner_name = NULL) {
+  $alpha_module_entity_types = entity_load('alpha_module_entity_type', isset($owner_name) ? array($owner_name) : FALSE, array(), TRUE);
+  return isset($owner_name) ? reset($alpha_module_entity_types) : $alpha_module_entity_types;
+}
+
+/**
+ * Load  Alpha Module Entity Type.
+ */
+function alpha_module_entity_type_load($alpha_module_entity_type) {
+  return alpha_module_entity_types($alpha_module_entity_type);
+}
+
+/**
+ * Save  Alpha Module Entity type entity.
+ */
+function alpha_module_entity_type_save($alpha_module_entity_type) {
+  entity_save('alpha_module_entity_type', $alpha_module_entity_type);
+}
+
+/**
+ * Delete single  Alpha Module Entity type.
+ */
+function alpha_module_entity_type_delete($alpha_module_entity_type) {
+  entity_delete('alpha_module_entity_type', entity_id('alpha_module_entity_type' ,$alpha_module_entity_type));
+}
+
+/**
+ * Delete multiple  Alpha Module Entity types.
+ */
+function alpha_module_entity_type_delete_multiple($alpha_module_entity_type_ids) {
+  entity_delete_multiple('alpha_module_entity_type', $alpha_module_entity_type_ids);
 }
 
 //*****Schedule cron jobs.
