@@ -148,7 +148,7 @@ function alpha_module_entity_info() {
   /**
    * Create an entity info array.
    * Common Format:
-   * $entities['my_entity_machine_name'] = array(
+   * $entities['alpha_module_entity'] = array(
    *   'label' => t('My Entity Name'),
    *   'entity class' => 'MyEntityClass',
    *   'controller class' => 'MyEntityController', [leave blank to use the default controller]
